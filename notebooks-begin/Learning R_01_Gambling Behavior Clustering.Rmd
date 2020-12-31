@@ -1,0 +1,16 @@
+---
+title: "Learning R_01_Gambling Behavior Clustering"
+output: html_notebook
+---
+
+#This is a notebook intering based on [2], the main target it is learing and practice R.
+
+
+
+
+
+
+
+# REFERENCES
+#[1]https://www.kaggle.com/kingabzpro/gambling-behavior-bustabit, Data
+#[2]https://www.kaggle.com/kingabzpro/gambling-behavior-clustering, Notebook based on
