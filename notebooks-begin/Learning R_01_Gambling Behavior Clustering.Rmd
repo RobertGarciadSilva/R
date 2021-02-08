@@ -3,14 +3,29 @@ title: "Learning R_01_Gambling Behavior Clustering"
 output: html_notebook
 ---
 
-#This is a notebook intering based on [2], the main target it is learing and practice R.
+This is a notebook intering based on [2], the main target it is learing and practice R.
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+# Reading data
+data <- read.csv("./data/bustabit.csv")
+head(data)
+
+```
+
+```{r}
+library(tidyverse)
+```
 
 
 
 
+REFERENCES
 
-
-
-# REFERENCES
-#[1]https://www.kaggle.com/kingabzpro/gambling-behavior-bustabit, Data
-#[2]https://www.kaggle.com/kingabzpro/gambling-behavior-clustering, Notebook based on
+[1]https://www.kaggle.com/kingabzpro/gambling-behavior-bustabit, Data
+[2]https://www.kaggle.com/kingabzpro/gambling-behavior-clustering, Notebook based on
+[3]http://material.curso-r.com/pipe/
