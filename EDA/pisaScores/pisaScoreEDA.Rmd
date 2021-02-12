@@ -1,0 +1,115 @@
+---
+title: "R Notebook - PisaScores EDA"
+output: html_notebook
+---
+
+# EDA - Pisa Scores (Learning, baseado em [1])
+
+## Importando os dados
+
+```{r}
+df.raw <- read.csv(file="./data/Pisa mean perfromance scores 2013 - 2015 Data.csv", fileEncoding = "UTF-8-BOM", na.strings = "..")
+```
+
+```{r}
+str(df.raw)
+```
+
+
+## Limpando e processando os dados
+
+Importando bibliotecas.
+```{r}
+#install.packages("tidyverse")
+library(tidyverse)
+#library(magrittr)
+#library(dplyr)
+```
+
+
+```{r}
+head(df.raw) # Primeiras linhas do dataSet.
+#View(df.raw) # Visão do DataSet usando tidyverse
+names(df.raw) # Nome das colunas do dataSet.
+dim(df.raw) # Dimensão dataSet.
+```
+
+Os dados são realmente colocados até a linha 1161, isso pode ser verificado visualisando as últimas linhas de df.raw.
+
+```{r}
+df <- df.raw[1:1161,c(1,4,7)] # = df <- df.raw[1:1166, c(1,4,7)], selecionando algumas linhas e colunas.
+head(df)
+
+levels(df$Series.Code)
+```
+
+Representando cada país com apenas uma linha, expalhando a coluna "Series.Code" e seus valores.
+```{r}
+df <- df %>%  spread(key=Series.Code, value=X2015..YR2015.) 
+head(df)
+```
+
+Renomeando o nome das colunas.
+```{r}
+
+df <- df %>% rename(
+                    Matematica = LO.PISA.MAT,
+                    Matematica.F = LO.PISA.MAT.FE,
+                    Matematica.M = LO.PISA.MAT.MA,
+                    Leitura = LO.PISA.REA,
+                    Leitura.F = LO.PISA.REA.FE,
+                    Leitura.M = LO.PISA.REA.MA, 
+                    Ciência = LO.PISA.SCI,
+                    Ciência.F = LO.PISA.SCI.FE,
+                    Ciência.M = LO.PISA.SCI.MA
+                    )
+head(df)
+
+```
+
+Apagando linhas com valores NA.
+```{r}
+
+df <- df %>% drop_na()
+head(df)
+dim(df)
+```
+
+
+## Visualizando os dados
+
+```{r, fig.width=10, fig.height=11}
+
+ggplot(data=df,aes(x=reorder(Country.Name, Matematica), y=Matematica)) +
+  geom_bar(stat = "identity", aes(fill=Matematica)) +
+  coord_flip() +
+  theme_grey() +
+  scale_fill_gradient(name="Pontuação em matemática") + 
+  labs(title = "Rank dos países pela pontuação em matemática", y="Pontuação", x="Países") +
+  geom_hline(yintercept = mean(df$Matematica), size = 1, color = 'blue')
+
+
+  
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## Referências:
+[1]https://towardsdatascience.com/exploratory-data-analysis-in-r-for-beginners-fe031add7072
+[2]https://www.kaggle.com/zazueta/pisa-scores-2015?select=Pisa+mean+perfromance+scores+2013+-+2015+Data.csv
+[3]https://ohi-science.org/data-science-training/dplyr.html
+
+
+
+
