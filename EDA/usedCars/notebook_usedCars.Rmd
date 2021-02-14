@@ -1,0 +1,119 @@
+---
+title: "R Notebook - Used Cars"
+output: html_notebook
+---
+# Exemplo rápida EDA
+
+Importando os dados.
+```{r}
+data_usedCars <- read.csv("./data/usedcars.csv", stringsAsFactors = FALSE)
+```
+
+Visão rápida e geral.
+```{r}
+str(data_usedCars)
+```
+
+# Visão rápida dados Quantitativos
+
+Sumário geral dos dados.
+```{r}
+print(summary(data_usedCars[c("price", "mileage")]))
+```
+
+Range
+```{r}
+range(data_usedCars$price)
+print(paste("Range coluna price: ", diff(range(data_usedCars$price))))
+```
+
+Interquartile range (IQR), diferença entre Q1 e Q3.
+```{r}
+IQR(data_usedCars$price)
+```
+
+Quantiles:
+
+```{r}
+quantile(data_usedCars$price)
+quantile(data_usedCars$price, probs = c(0.01, 0.25, 0.3)) # 1% dos dados estão até 5428.69, 25% estão até 10995.00 ...
+quantile(data_usedCars$price, seq(from = 0, to = 1, by=0.20))
+```
+
+Boxplots
+```{r}
+boxplot(data_usedCars$price, main="Boxplot Used Car Prices", ylab="Prices ($)")
+boxplot(data_usedCars$mileage, main="Boxplot Used Car Miliage", ylab="Odometer (mi.)")
+```
+
+Histogramas.
+```{r}
+hist(data_usedCars$price, main="Histograma Used Car Price", xlab="Price ($)")
+hist(data_usedCars$mileage, main="Histograma Used Car Miliage", xlab="Odometer (mi.)")
+```
+
+Variância e desvio padrão.
+```{r}
+var(data_usedCars$price)
+sd(data_usedCars$price)
+```
+
+# Visão geral dados Qualitativos
+
+Tabela de contagem de valores.
+```{r}
+table(data_usedCars$year)
+table(data_usedCars$model)
+table(data_usedCars$color)
+table(data_usedCars$transmission)
+```
+
+Tabela de count values da coluna "year".
+```{r}
+table_year <- table(data_usedCars$year)
+probTable_year <- prop.table(table_year)
+year_prc <- round(probTable_year*100, digits=1)
+year_prc
+```
+
+Tabela de count values das outras colunas.
+```{r}
+round(prop.table(table(data_usedCars$model))*100, digits = 1)
+round(prop.table(table(data_usedCars$color))*100, digits = 1)
+round(prop.table(table(data_usedCars$transmission))*100, digits = 1)
+```
+
+# Scatterplot de algumas variáveis
+
+```{r}
+plot(x=data_usedCars$mileage, y=data_usedCars$price, 
+     main="Scatterplot Price vs mileage",
+     xlab="Used Car Odometer (mi.)",
+     ylab="Used Car Price ($)")
+```
+
+# Examinando relação - two-way cross-tabulations
+
+```{r}
+#install.packages("gmodels") # CrossTable()
+library(gmodels)
+```
+
+Criando uma nova coluna "Conservative", coluna binária que representa todas as cores dos veículos em duas categorias,
+Cores conservativas (preto, cinza, branco, prata) e o restante é classificada como não conservativa.
+```{r}
+data_usedCars$conservative_color <- data_usedCars$color %in% c("Black", "Gray", "Silver", "White") # "is the used car color in the set of black, gray, silver, and white?"
+```
+
+```{r}
+str(data_usedCars)
+```
+```{r}
+CrossTable(x = data_usedCars$model, y = data_usedCars$conservative_color, chisq = TRUE)
+```
+  Observe as céluas com as linhas (N/Row Total), em especial podemos observar que para os trẽs modelos de carros apresentados, para cada modelo a taxa de cores conservativas é próxima (0.654, 0.696, 0.653) o que aparentta indicar que não existe muita diferença entre cor do carro escolhido dado a escolha do um modelo. 
+  O valor alto obtido para o Chi-squared test (0.92591) indica baixa assosiação entre as variáveis (model and color).
+
+# References
+[1] Capítilo 2, livro: Machine Learning R, Brett Lantz
+

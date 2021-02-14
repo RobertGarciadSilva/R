@@ -20,7 +20,7 @@ str(df.raw)
 
 Importando bibliotecas.
 ```{r}
-#install.packages("tidyverse")
+install.packages("tidyverse")
 library(tidyverse)
 #library(magrittr)
 #library(dplyr)
@@ -78,17 +78,34 @@ dim(df)
 
 ## Visualizando os dados
 
-```{r, fig.width=10, fig.height=11}
+```{r}
+#install.packages("ggplot2")
+library(ggplot2)
+```
+```{r}
 
-ggplot(data=df,aes(x=reorder(Country.Name, Matematica), y=Matematica)) +
-  geom_bar(stat = "identity", aes(fill=Matematica)) +
-  coord_flip() +
-  theme_grey() +
-  scale_fill_gradient(name="Pontuação em matemática") + 
-  labs(title = "Rank dos países pela pontuação em matemática", y="Pontuação", x="Países") +
-  geom_hline(yintercept = mean(df$Matematica), size = 1, color = 'blue')
+d <- data.frame(dose=c("D", "D1", "D2"),
+                len=c(4.2,4,5) )
+names(d)
+
+p <- ggplot(data=d, aes(dose,len)) + 
+    geom_bar(stat="identity")
+
+p
+```
 
 
+```{r}
+
+df_plot01 <- ggplot(data=df,aes(x=Country.Name, y=Matematica))# +
+  geom_bar(stat = "identity", aes(fill=Matematica)) #+
+  #coord_flip() +
+  #theme_grey()# +
+  #scale_fill_gradient(name="Pontuação da pontuação em matemática") + 
+  #labs(title = "Rank dos países pela pontuação em matemática", y="Pontuação", x="Países") +
+  #geom_hline(yintercept = mean(df$Matematica),size = 1, color = 'blue')
+
+df_plot01
   
 ```
 
@@ -109,7 +126,3 @@ ggplot(data=df,aes(x=reorder(Country.Name, Matematica), y=Matematica)) +
 [1]https://towardsdatascience.com/exploratory-data-analysis-in-r-for-beginners-fe031add7072
 [2]https://www.kaggle.com/zazueta/pisa-scores-2015?select=Pisa+mean+perfromance+scores+2013+-+2015+Data.csv
 [3]https://ohi-science.org/data-science-training/dplyr.html
-
-
-
-
