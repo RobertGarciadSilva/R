@@ -1,0 +1,184 @@
+---
+title: "R Notebook - Melbourne House Snapshot, EDA"
+subtitle: "Simple Exploratory data analysis Melbourne House Snapshot"
+output: html_notebook
+---
+
+## Introduction and Context
+
+Simple EDA Melbourne House Snapshot. O objetivo é realizar uma exploração de dados no dataset "Melbourne House Snapshot" e aplicar um modelo para prever a feature "Price" tendo como base várias outras features representando características do imóvel.
+
+Caractéristicas identificadas (Dicionário):
+
+- Address: Endereço
+- Suburb: Subúrbio/Periféria
+- PostCod: Código postal
+- YearBuild: Ano de construção
+- Rooms: Número de quartos;
+- Price: Preço do imóvel em Dollar.
+- Method: Metodo de venda, sendo:  
+S - imóvel vendido; SP - imóvel vendido anteriormente; PI - propriedade transmitida; PN - vendido antes não divulgado; SN - vendido não divulgado; NB - sem licitação; VB - oferta do fornecedor; W - retirado antes do leilão; SA - vendido após leilão; SS - vendido após o preço do leilão não divulgado. N / A - preço ou lance mais alto não disponível. 
+- Type: Tipo do imóvel, sendo:
+br - quarto (s); h - casa, casa de campo, villa, semi, terraço; unidade, duplex - casa geminada; site dev - site de desenvolvimento; o res - outro residencial. 
+- VendedorG: Agente imobiliário. 
+- Date: Data de venda.
+- Distance: Distância, provavelmente em milhas, CBD (Central Business District) distrito central de negócios.
+- Regionname: Região Geral (West, North West, North, North east …etc)
+- Propertycount: Número de propriedades que existem no súrbubio/periferia.
+- Bedroom2: Representa "Rooms", mas obtido de outra fonte.
+- Bathroom: Número de banheiros.
+- Car: Número de vagas de estácionamento. 
+- Landsize: Tamanho do terreno. 
+- BuildingArea: Tamanho da construção.
+- ConcilArea: Governing council for the area 
+- Propertycount: Ainda não identificado.
+- Longtitude: Longitude
+- Lattitude: Latitude
+
+## Overview and Data Pre-processing
+### Load Libraries
+
+```{r message = FALSE}
+library(tidyverse) # Geral EDA
+library(rpart) # Regression Tree
+library(modelr) # mae function: sqrt((actual-predicted)²)
+library(ggplot2) # Geral plot
+library(dplyr) # Use %>%
+```
+
+### Load Data
+
+```{r}
+#importing data
+melbourne <- read.csv("./data/melb_data.csv")
+```
+
+### Overview
+
+```{r}
+str(melbourne)
+```
+```{r}
+colSums(is.na(melbourne))
+```
+Valores NA de cada atributo do conjunto de dados.
+
+* Colunas Car, BuldingArea e YearBuilt apresentam problemas quanto a valores NA, sendo as duas últimas mais problematicas por apresentarem grande quantidade de valores NA.
+
+
+```{r}
+round(sum(is.na(melbourne$BuildingArea))/length(melbourne$BuildingArea)*100, digits=2)
+round(sum(is.na(melbourne$YearBuilt))/length(melbourne$YearBuilt)*100, digits=2)
+```
+* BuildingArea e YearBuilt apresentam respectivamente 47.5% e 39.58% de valores NA.
+
+
+## Análise univariada
+
+### Suburb Column
+
+```{r}
+suburb_t <- round(prop.table(table(melbourne$Suburb)), digits=3)*100
+max(suburb_t)
+```
+* Como visto anteriormente, a coluna "Suburb" possui 314 levels, acima podemos ver que o valor que mais se repete nessa coluna ocorre 2.6% das vezes, não representando um valor que ocorre com frequência. 
+* Abaixo plotamos um histograma desses valores, a maior parte dos valores em "Suburb" ocorre, em termos relativos, 0% das vezes, ou seja, ocorre pouquissimas vezes. 
+
+```{r}
+hist(suburb_t)
+```
+* Os valores que mais ocorrem e sua frequência absoluta são mostrados abaixo.
+
+```{r}
+summary(melbourne$Suburb)
+```
+
+
+### Adress Column
+* Como observado acima, quase nenhum valor em "Adress" se repete. Uma coisa interessante seria observar os valores que ocorrem mais de uma vez.
+
+```{r}
+summary(melbourne$Address)
+```
+
+
+
+
+```{r}
+summary(melbourne$Price)
+```
+
+```{r}
+temp <- melbourne[Price <= 9000000]
+temp
+```
+
+```{r}
+#install.packages("data.table")
+library(data.table)
+
+melb <- data.table::fread('./data/melb_data.csv', na.strings = "", stringsAsFactors = TRUE)
+
+```
+
+```{r}
+temp <- melb[Price == max(Price)]
+temp
+```
+
+
+
+```{r}
+round(prop.table(table(melbourne$Type))*100, digits = 2)
+round(prop.table(table(melbourne$Method))*100, digits = 2)
+```
+
+```{r}
+#typeof(melbourne$Type)
+```
+
+
+### Overview - Plotagens
+
+```{r, fig.width=8}
+ggplot(melbourne, aes(x=Rooms, y=Price, color=Type)) + geom_point()
+ggplot(melbourne, aes(x=Landsize, y=Price)) + geom_point()
+ggplot(melbourne, aes(x=YearBuilt, y=Price)) + geom_point()
+ggplot(melbourne, aes(x=BuildingArea, y=Price)) + geom_point()
+ggplot(melbourne, aes(x=Car, y=Price, color=Method)) + geom_point()
+ggplot(melbourne, aes(x=Lattitude, y=Price, color=Regionname)) + geom_point()
+ggplot(melbourne, aes(x=Longtitude, y=Price, color=Regionname)) + geom_point()
+ggplot(melbourne, aes(x=Postcode, y=Price, color=Regionname)) + geom_point()
+ggplot(melbourne, aes(x=Lattitude, y=Price, color=Rooms)) + geom_point()
+ggplot(melbourne, aes(x=Lattitude, y=Longtitude, color=Regionname, alpha=0.5)) + geom_point()
+ggplot(melbourne, aes(x=Distance, y=Price)) + geom_point()
+ggplot(melbourne, aes(x=Rooms, y=Price, color=Regionname)) + geom_point()
+
+```
+```{r}
+dim(melbourne %>% count(Postcode))
+dim(melbourne %>% count(Address))
+```
+
+
+```{r, fig.width=9}
+#Aplicando rápida Regression Tree
+
+fit_regTree <- rpart(Price ~ Rooms +  Lattitude + Longtitude, data=melbourne)
+plot(fit_regTree, uniform = TRUE); text(fit_regTree, cex=0.9)
+round(mae(model=fit_regTree, data=melbourne), digits = 2)
+```
+
+```{r}
+summary(fit_regTree)
+```
+
+
+
+## Some references
+[1]https://sebastiansauer.github.io/figure_sizing_knitr/
+
+
+
+
+

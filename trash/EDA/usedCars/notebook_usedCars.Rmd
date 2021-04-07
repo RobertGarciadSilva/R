@@ -2,7 +2,7 @@
 title: "R Notebook - Used Cars"
 output: html_notebook
 ---
-# Exemplo rápida EDA
+# Exemplo rápido EDA
 
 Importando os dados.
 ```{r}
@@ -92,6 +92,20 @@ plot(x=data_usedCars$mileage, y=data_usedCars$price,
      ylab="Used Car Price ($)")
 ```
 
+
+```{r}
+library(ggplot2)
+ggplot(data_usedCars, aes(x=mileage, y=price, color=transmission)) + geom_point()
+ggplot(data_usedCars, aes(x=mileage, y=price, color=year)) + geom_point()
+ggplot(data_usedCars, aes(x=mileage, y=price, color=model)) + geom_point()
+#ggplot(data_usedCars, aes(x=mileage, y=price, color=conservative_color)) + geom_point()
+
+```
+É possível observar alguns pontos que já eram esperados:
+- Quanto maior a quilometrage (mileage) mais antigo (year) é o carro. Correlação negativa.
+- A transmissão não parece afetar o preço final do carro.
+- Os modelos SEL são os mais caros, novos e de menor quilômetragem.
+
 # Examinando relação - two-way cross-tabulations
 
 ```{r}
@@ -105,6 +119,8 @@ Cores conservativas (preto, cinza, branco, prata) e o restante é classificada c
 data_usedCars$conservative_color <- data_usedCars$color %in% c("Black", "Gray", "Silver", "White") # "is the used car color in the set of black, gray, silver, and white?"
 ```
 
+
+
 ```{r}
 str(data_usedCars)
 ```
@@ -116,4 +132,6 @@ CrossTable(x = data_usedCars$model, y = data_usedCars$conservative_color, chisq 
 
 # References
 [1] Capítilo 2, livro: Machine Learning R, Brett Lantz
+[2]http://www.sthda.com/english/wiki/ggplot2-scatter-plots-quick-start-guide-r-software-and-data-visualization
+
 

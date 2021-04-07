@@ -1,0 +1,121 @@
+---
+title: "R Notebook - R Basics 01"
+Subtitle: "Basics concepts R - Data Types and Structures"
+output: html_notebook
+---
+
+```{r}
+a <- "dataset"
+b <- 2L # "L" tell R to consider as integer
+c <- 3.16
+
+typeof(a)
+typeof(b)
+typeof(c)
+class(a)
+class(b)
+class(c)
+
+# typeof: What kind of object is (high-level)
+# class: What kind of object is (low-level)
+```
+
+
+```{r}
+a1 <- 1:10
+typeof(a1)
+class(a1)
+a1
+
+a2 <- c(a1)
+a2
+typeof(a2)
+class(a2)
+
+a3 <- as.factor(a2)
+a3
+typeof(a3)
+class(a3)
+```
+
+```{r}
+
+v1 <- vector(mode="integer", 5);
+v1
+v1[1] = 1; 
+v1
+
+for(l in v1) print(l)
+
+v2 <- c(v1,2,3);
+v2
+str(v2)
+
+```
+```{r}
+s <- seq(from=1, to=5, by=0.5)
+s
+typeof(s)
+class(s)
+length(s)
+attributes(s) # Show if exists Metadata
+```
+
+```{r}
+m <- matrix(nrow=2, ncol=2)
+m[1,1] <- 2
+m
+dim(m)
+class(m)
+typeof(m)
+m1 <- matrix(c(1:3)); m1
+
+v <- as.vector(m1); v
+```
+
+```{r}
+#set.seed(42)
+#d <- rnorm(100); hist(d)
+```
+
+```{r}
+
+m <- 1:10
+dim(m) <- c(2,5)
+m
+m2 <- matrix(m, nrow=2, ncol=5, byrow=TRUE); m2
+
+```
+
+```{r}
+l <- vector(mode="list", 4)
+l[[1]] = 5; l
+
+typeof(l)
+class(l)
+
+typeof(l[[1]])
+```
+
+
+```{r}
+
+sumOne <- function(x){
+  return (x + 1);
+}
+
+values <- 1:10
+
+dim(values) <- c(2,5); values
+
+#apply(values, 1, sum)
+other_val <- as.vector(lapply(values, sumOne))
+dim(other_val) <- c(2,5); other_val
+
+```
+
+
+
+
+## References
+[1]https://swcarpentry.github.io/r-novice-inflammation/13-supp-data-structures/

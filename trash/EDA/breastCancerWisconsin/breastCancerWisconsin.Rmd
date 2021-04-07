@@ -1,0 +1,128 @@
+---
+title: "R Notebook - EDA Breast Cancer Wisconsin"
+output: html_notebook
+---
+
+# EDA
+
+Importando os dados.
+```{r}
+data_BreastCancer <- read.csv("./data/breastCancerWisconsin.csv")
+```
+
+
+# Overview (Rápida visualização)
+```{r}
+str(data_BreastCancer)
+```
+
+```{r}
+#View(data_BreastCancer)
+```
+
+```{r}
+data_BreastCancer$X <- NULL #deletando a coluna "X"
+data_BreastCancer$id <- NULL
+str(data_BreastCancer)
+```
+
+```{r}
+table(data_BreastCancer$diagnosis)
+```
+
+```{r}
+data_BreastCancer$diagnosis <- factor(data_BreastCancer$diagnosis, levels = c("B", "M"), labels = c("Benign", "Malignant"))
+```
+```{r}
+round(prop.table(table(data_BreastCancer$diagnosis))*100, digits=1)
+```
+
+```{r}
+summary(data_BreastCancer[,1:6])
+```
+
+
+```{r}
+normalize <- function(x){
+  return ((x - min(x))/(max(x) - min(x)))
+}
+```
+
+```{r}
+data_BreastCancer_norm <- as.data.frame(lapply(data_BreastCancer[2:31], normalize))
+#data_BreastCancer_norm <- as.data.frame(scale(data_BreastCancer[-1]))
+```
+```{r}
+summary(data_BreastCancer_norm[,1:5])
+```
+
+
+# Creating data train and data test
+
+```{r}
+# Um separador simples, observe que não é selecionando os dados de forma aleatória dado que os dados
+# do dataset já se encontram ordenados de forma aleatória. 
+split_train_test <- function(data_frame, porc_train){
+  quant_linhas = round(porc_train*dim(data_frame)[1], digits = 1)
+  d_train = data_frame[1:quant_linhas, ]
+  d_test = data_frame[(quant_linhas+1):dim(data_frame)[1], ]
+  return (list(train = d_train, test = d_test))
+}
+```
+
+```{r}
+d_breastCancer <- split_train_test(data_BreastCancer_norm, 0.8) # selecionando 80% dos dados para treino
+train = d_breastCancer$train
+test = d_breastCancer$test
+```
+
+```{r}
+str(train)
+```
+
+```{r}
+#tail(test)
+```
+
+
+```{r}
+# Labels
+
+labels <- split_train_test(data_BreastCancer[1], 0.8)
+train_labels <- labels$train
+test_labels <- labels$test
+```
+
+```{r}
+#sum(is.na(test))
+#str(test)
+```
+
+
+# Treinando o modelo KNN
+
+```{r}
+library(class)
+
+breastCancer_test_pred <- knn(train = train, test = test, cl = train_labels, k = 21)
+```
+
+```{r}
+#length(test_labels)
+```
+
+```{r}
+library(gmodels)
+CrossTable(x = test_labels, y = breastCancer_test_pred, prop.chisq = FALSE)
+```
+
+
+
+
+
+
+
+
+
+
+
