@@ -142,9 +142,166 @@ ggplot(data = mpg) +
   facet_grid(. ~ cty)
 ```
 
+```{r}
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x=displ, y=hwy)) + 
+  geom_smooth(mapping = aes(x=displ, y=hwy), color='green')
+
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x=displ, y=hwy))
+
+ggplot(data = mpg, mapping = aes(x=displ, y=hwy)) + 
+  geom_point(mapping = aes(color=drv)) + 
+  geom_smooth(mapping = aes(linetype = drv, color = drv), se=FALSE)
+```
+
+```{r}
+ggplot(data = mpg, mapping = aes(x=displ, y=hwy)) + 
+  geom_point(mapping = aes(color=drv)) + 
+  geom_vline(xintercept = mean(mpg$displ)) + 
+  geom_hline(yintercept = mean(mpg$hwy))
+```
+
+```{r}
+ggplot(data = mpg) + 
+  geom_boxplot(mapping = aes(y=hwy, color=drv))
+```
+```{r}
+ggplot(data = mpg, mapping = aes(x=displ, y=hwy)) + 
+  geom_point() + 
+  geom_smooth(se=FALSE)
+
+ggplot(data = mpg, mapping = aes(x=displ, y=hwy)) + 
+  geom_point() + 
+  geom_smooth(mapping = aes(group=drv), se=FALSE)
+```
+```{r}
+ggplot(data = mpg, mapping= aes(x=displ, y=hwy)) + 
+  geom_point(mapping = aes(color=drv)) + 
+  geom_smooth(mapping = aes(color=drv), se=FALSE)
+
+ggplot(data = mpg, mapping = aes(x=displ, y=hwy)) + 
+  geom_point(mapping = aes(color=drv)) + 
+  geom_smooth(se=FALSE)
+
+ggplot(data = mpg, mapping = aes(x=displ, y=hwy)) + 
+  geom_point(mapping = aes(color=drv)) + 
+  geom_smooth(mapping = aes(linetype=drv), se=FALSE)
+
+ggplot(data = mpg, mapping = aes(x=displ, y=hwy)) + 
+  geom_point(stroke=6, color='white') + 
+  geom_point(mapping = aes(color=drv), size=4)
+```
 
 
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut))
+  
+```
 
+```{r}
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x=cut, y=stat(prop), group=1))
+```
+```{r}
+ggplot(data = mpg, mapping = aes(x=class)) + 
+  geom_bar(mapping = aes(y=stat(prop), group=1))
+
+ggplot(data = mpg, mapping = aes(x=class)) + 
+  geom_bar(mapping = aes(y=stat(prop), group=1, weight = displ)) #https://ggplot2.tidyverse.org/reference/geom_bar.html, weight
+
+ggplot(data = mpg, mapping = aes(x=class)) + 
+  geom_bar(mapping = aes(weight = displ))
+
+ggplot(data = mpg, mapping = aes(x=class)) + 
+  geom_bar()
+```
+```{r}
+ggplot(data = diamonds) + 
+  stat_summary(
+    mapping = aes(x = cut, y = depth),
+    fun.min = min,
+    fun.max = max,
+    fun = median
+  )
+```
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_pointrange(mapping = aes(x=cut, y=depth),
+                  stat = 'summary',
+                  fun.min = min,
+                  fun.max = max,
+                  fun = median)
+  
+```
+
+
+```{r}
+ggplot(data = diamonds) + 
+  geom_boxplot(mapping = aes(x=cut, y=depth))
+```
+
+```{r}
+ggplot(data = mtcars, mapping = aes(x= factor(cyl), fill= factor(gear))) + 
+  geom_bar(position = position_dodge(width=0.8))
+```
+
+```{r}
+ggplot(data = mtcars) + 
+  geom_boxplot(mapping = aes(y= gear, group=mpg))
+```
+
+```{r}
+ggplot(data = mtcars) + 
+  geom_point(mapping = aes(x=mpg, y=wt, size=cyl, color=carb)) + 
+  geom_vline(xintercept = median(mtcars$mpg)) + 
+  geom_hline(yintercept = median(mtcars$wt)) + 
+  facet_wrap(~gear)
+
+mtcars_sc <- as.data.frame(scale(mtcars))
+
+ggplot(data = mtcars_sc) + 
+  geom_point(mapping = aes(x=mpg, y=wt, size=cyl, color=carb)) + 
+  geom_vline(xintercept = median(mtcars_sc$mpg)) + 
+  geom_hline(yintercept = median(mtcars_sc$wt)) + 
+  geom_smooth(mapping = aes(x=mpg, y=hp), se=FALSE, color='red') 
+ 
+```
+
+
+```{r}
+ggplot(data = mtcars) + 
+  geom_histogram(mapping = aes(x=hp), binwidth = 15)
+```
+
+```{r}
+
+ggplot(data = mpg, mapping = aes(x=cty, y=hwy)) + 
+  geom_point(position = 'jitter', alpha=0.5) + 
+  geom_abline() + 
+  labs(title='Hwy vs cty', subtitle = 'Comparação', x='cty', y='hwy', caption = 'Fonte:') + 
+  coord_fixed() + 
+  geom_smooth(method = 'lm', se= FALSE)
+
+```
+
+
+```{r}
+lm(hwy ~ cty, data=mpg)
+```
+
+```{r}
+my_variabe_name <- 2.5
+
+my_variabe_n <- 3.5
+
+```
+
+```{r}
+
+```
 
 References<br>
 [1]https://r4ds.had.co.nz/data-visualisation.html#creating-a-ggplot
